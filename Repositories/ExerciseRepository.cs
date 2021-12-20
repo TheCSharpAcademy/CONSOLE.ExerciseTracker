@@ -4,10 +4,10 @@ namespace ExerciseTracker.Api.Repositories
 {
     public interface IExerciseRepository
     {
-        IEnumerable<Exercise> GetAll(int id);
+        IEnumerable<Exercise> GetAll();
         Exercise GetById(int id);
         void Add(Exercise exercise);
-        void Delete(int id);
+        void Delete(Exercise exercise);
         void Update(Exercise exercise);
         bool Save();
     }
@@ -35,7 +35,7 @@ namespace ExerciseTracker.Api.Repositories
             _context.Exercises.Remove(exercise);
         }
 
-        public IEnumerable<Exercise> GetAll(int id)
+        public IEnumerable<Exercise> GetAll()
         {
             return _context.Exercises
             .OrderBy(s => s.Id)

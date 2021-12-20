@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExerciseTracker.Api;
 using ExerciseTracker.Api.Models;
+using ExerciseTracker.Api.Repositories;
 
 namespace ExerciseTracker.Api.Controllers
 {
@@ -15,45 +16,43 @@ namespace ExerciseTracker.Api.Controllers
     [ApiController]
     public class ExercisesController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IExerciseRepository _exerciseRepository;
 
-        public ExercisesController(DataContext context)
+        public ExercisesController(IExerciseRepository exerciseRepository)
         {
-            _context = context;
+            _exerciseRepository = exerciseRepository;
         }
 
         // GET: api/Exercises
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Exercise>>> GetExercises()
+        public ActionResult<IEnumerable<Exercise>>GetExercises()
         {
-            return await _context.Exercises.ToListAsync();
+            return Ok(_exerciseRepository.GetAll());
         }
 
         // GET: api/Exercises/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Exercise>> GetExercise(int id)
+        public ActionResult<Exercise> GetExercise(int id)
         {
-            var exercise = await _context.Exercises.FindAsync(id);
+            var exercise = _exerciseRepository.GetById(id);
 
             if (exercise == null)
             {
                 return NotFound();
             }
 
-            return exercise;
+            return Ok(exercise);
         }
 
         // PUT: api/Exercises/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExercise(int id, Exercise exercise)
+        public IActionResult PutExercise(int id, Exercise exercise)
         {
             if (id != exercise.Id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(exercise).State = EntityState.Modified;
 
             try
             {
@@ -77,10 +76,10 @@ namespace ExerciseTracker.Api.Controllers
         // POST: api/Exercises
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Exercise>> PostExercise(Exercise exercise)
+        public ActionResult<Exercise> PostExercise(Exercise exercise)
         {
-            _context.Exercises.Add(exercise);
-            await _context.SaveChangesAsync();
+            _exerciseRepository.Update();Shift(shiftEntity);
+            _context.SaveChanges();
 
             return CreatedAtAction("GetExercise", new { id = exercise.Id }, exercise);
         }
