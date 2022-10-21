@@ -1,15 +1,14 @@
 ﻿using ExerciseTracker.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExerciseTracker.Api
-{
-    public class DataContext: DbContext
-    {
-        public DataContext(DbContextOptions<DataContext> options)
-            : base(options)
-        {
-        }
+namespace ExerciseTracker.Api;
 
-        public DbSet<Exercise> Exercises { get; set; } = null!;
+public class DataContext: DbContext
+{
+    public DataContext(DbContextOptions<DataContext> options)
+        : base(options)
+    {
     }
+
+    public DbSet<Exercise> Exercises { get; set; } = null!;
 }

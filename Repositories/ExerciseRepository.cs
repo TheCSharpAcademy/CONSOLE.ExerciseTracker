@@ -1,60 +1,59 @@
 ﻿using ExerciseTracker.Api.Models;
 
-namespace ExerciseTracker.Api.Repositories
+namespace ExerciseTracker.Api.Repositories;
+
+public interface IExerciseRepository
 {
-    public interface IExerciseRepository
+    IEnumerable<Exercise> GetAll();
+    Exercise GetById(int id);
+    void Add(Exercise exercise);
+    void Delete(Exercise exercise);
+    void Update(Exercise exercise);
+    bool Save();
+}
+public class ExerciseRepository: IExerciseRepository
+{
+    private readonly DataContext _context;
+
+    public ExerciseRepository(DataContext context)
     {
-        IEnumerable<Exercise> GetAll();
-        Exercise GetById(int id);
-        void Add(Exercise exercise);
-        void Delete(Exercise exercise);
-        void Update(Exercise exercise);
-        bool Save();
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
-    public class ExerciseRepository: IExerciseRepository
+
+    public void Add(Exercise exercise)
     {
-        private readonly DataContext _context;
-
-        public ExerciseRepository(DataContext context)
+        if (exercise == null)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            throw new ArgumentNullException(nameof(Exercise));
         }
 
-        public void Add(Exercise exercise)
-        {
-            if (exercise == null)
-            {
-                throw new ArgumentNullException(nameof(Exercise));
-            }
+        _context.Exercises.Add(exercise);
+    }
 
-            _context.Exercises.Add(exercise);
-        }
+    public void Delete(Exercise exercise)
+    {
+        _context.Exercises.Remove(exercise);
+    }
 
-        public void Delete(Exercise exercise)
-        {
-            _context.Exercises.Remove(exercise);
-        }
+    public IEnumerable<Exercise> GetAll()
+    {
+        return _context.Exercises
+        .OrderBy(s => s.Id)
+        .ToList();
+    }
 
-        public IEnumerable<Exercise> GetAll()
-        {
-            return _context.Exercises
-            .OrderBy(s => s.Id)
-            .ToList();
-        }
+    public Exercise GetById(int id)
+    {
+        return _context.Exercises.FirstOrDefault(c => c.Id == id);
+    }
 
-        public Exercise GetById(int id)
-        {
-            return _context.Exercises.FirstOrDefault(c => c.Id == id);
-        }
+    public void Update(Exercise exercise)
+    {
+        _context.Exercises.Update(exercise);
+    }
 
-        public void Update(Exercise exercise)
-        {
-            _context.Exercises.Update(exercise);
-        }
-
-        public bool Save()
-        {
-            return (_context.SaveChanges() >= 0);
-        }
+    public bool Save()
+    {
+        return _context.SaveChanges() >= 0;
     }
 }
